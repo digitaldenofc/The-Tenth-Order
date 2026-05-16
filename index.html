@@ -39,7 +39,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 100vh; 
         }
 
         h1,
@@ -752,7 +752,6 @@
 
     <div id="toast">Mensagem</div>
 
-    <!-- START SCREEN -->
     <div id="start-screen" class="screen active">
         <h1 class="cinzel" style="font-size: 4em; margin-bottom: 0.2em;">A Décima Ordem</h1>
         <p class="cinzel" style="letter-spacing: 5px; color: var(--primary); margin-bottom: 2em;">A JORNADA DAS CARTAS
@@ -766,7 +765,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS SCREEN -->
     <div id="settings-screen" class="screen">
         <h2 class="cinzel">Configurações</h2>
         <div class="settings-content">
@@ -776,7 +774,7 @@
             </div>
             <div class="setting-item">
                 <span>Volume Global</span>
-                <input type="range" min="0" max="100" value="80">
+                <input type="range" id="volume-slider" min="0" max="100" value="80" oninput="SoundManager.setVolume(this.value)">
             </div>
             <div class="setting-item">
                 <span>Modo de Exibição</span>
@@ -786,20 +784,17 @@
         <button class="btn" style="margin-top:20px;" onclick="showScreen('start')">VOLTAR</button>
     </div>
 
-    <!-- BLESSING SCREEN -->
     <div id="blessing-screen" class="screen">
         <h2 class="cinzel">Bênção Inicial</h2>
         <p>Escolha um auxílio para sua jornada:</p>
         <div class="reward-container" id="blessing-container"></div>
     </div>
 
-    <!-- MAP SCREEN -->
     <div id="map-screen" class="screen">
         <h2 class="cinzel">O Caminho</h2>
         <div class="map-path" id="map-path"></div>
     </div>
 
-    <!-- REWARD SCREEN -->
     <div id="reward-screen" class="screen">
         <h2 id="reward-title" class="cinzel">Vitória!</h2>
         <p id="reward-subtitle">Escolha uma recompensa:</p>
@@ -809,7 +804,6 @@
             onclick="skipReward()">Pular</button>
     </div>
 
-    <!-- CAMPFIRE SCREEN -->
     <div id="campfire-screen" class="screen">
         <h2 class="cinzel">Fogueira</h2>
         <p>O fogo crepita, trazendo um breve descanso...</p>
@@ -833,7 +827,6 @@
         </div>
     </div>
 
-    <!-- SHOP SCREEN -->
     <div id="shop-screen" class="screen">
         <h2 class="cinzel">Loja do Viajante</h2>
         <p>🟡 Seu Ouro: <span id="shop-gold">0</span></p>
@@ -841,11 +834,9 @@
         <button class="btn" style="margin-top: 40px;" onclick="leaveShop()">Sair da Loja</button>
     </div>
 
-    <!-- BATTLE SCREEN -->
     <div id="battle-screen" class="screen">
         <div class="battle-container">
 
-            <!-- Enemy Area -->
             <div class="entity-area">
                 <div class="info">
                     <h3 id="enemy-name">Monstro</h3>
@@ -862,17 +853,14 @@
                 <img id="enemy-sprite" src="https://via.placeholder.com/180" class="sprite">
             </div>
 
-            <!-- Enemy Board -->
             <div id="enemy-board" class="board">
                 <div class="board-label">Tabuleiro do Inimigo</div>
             </div>
 
-            <!-- Player Board -->
             <div id="player-board" class="board">
                 <div class="board-label">Seu Tabuleiro</div>
             </div>
 
-            <!-- Player UI (HP, Hand, Deck) -->
             <div class="battle-footer">
                 <div class="pile" onclick="drawFromDeck()">
                     <span>MONTE</span>
@@ -903,6 +891,62 @@
         </div>
     </div>
     <script>
+        // --- SOUND MANAGER ---
+        const SoundManager = {
+            volume: 0.8,
+            bgm: null,
+            sounds: {
+                click: 'sons/click.mp3',
+                draw: 'sons/draw.mp3',
+                attack: 'sons/attack.mp3',
+                defend: 'sons/defend.mp3',
+                heal: 'sons/heal.wav',
+                ultimate: 'sons/ultimate.wav',
+                buy: 'sons/buy.mp3',
+                victory: 'sons/victory.mp3',
+                defeat: 'sons/defeat.wav',
+                coin: 'sons/coin.wav'
+            },
+            
+            init() {
+                // Configura o volume inicial pelo slider da UI
+                const slider = document.getElementById('volume-slider');
+                if(slider) this.volume = slider.value / 100;
+            },
+
+            setVolume(val) {
+                this.volume = val / 100;
+                if (this.bgm) {
+                    this.bgm.volume = this.volume * 0.5; // Música de fundo levemente mais baixa
+                }
+            },
+
+            play(soundName) {
+                if (!this.sounds[soundName]) return;
+                try {
+                    const audio = new Audio(this.sounds[soundName]);
+                    audio.volume = this.volume;
+                    audio.play().catch(e => console.log("Áudio bloqueado pelo navegador até interação."));
+                } catch(e) {
+                    console.error("Erro ao reproduzir som:", e);
+                }
+            },
+
+            playBGM(url) {
+                if (this.bgm) {
+                    this.bgm.pause();
+                }
+                try {
+                    this.bgm = new Audio(url);
+                    this.bgm.loop = true;
+                    this.bgm.volume = this.volume * 0.5;
+                    this.bgm.play().catch(e => console.log("BGM aguardando clique do usuário."));
+                } catch(e) {
+                    console.error("Erro na BGM:", e);
+                }
+            }
+        };
+
         // --- GAME STATE ---
         const state = {
             screen: 'start',
@@ -972,11 +1016,19 @@
         // --- CORE ---
 
         function showScreen(screenId) {
+            SoundManager.play('click');
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             setTimeout(() => {
                 document.getElementById(screenId + '-screen').classList.add('active');
             }, 50);
             state.screen = screenId;
+            
+            // Troca música ambiente se necessário
+            if (screenId === 'start') {
+                SoundManager.playBGM('sons/ambient_menu.wav');
+            } else if (screenId === 'battle') {
+                SoundManager.playBGM('sons/ambient_battle.ogg');
+            }
         }
 
         function spawnFloatingText(text, color, x, y) {
@@ -1047,7 +1099,7 @@
             state.player.deck = [];
             for (let i = 0; i < 4; i++) {
                 for (let v = 1; v <= 10; v++) {
-                    state.player.deck.push({ value: v, type: 'basic', name: v.toString(), power: 2, rarity: 'common', upgraded: false });
+                    state.player.deck.push({ value: v, type: 'basic', name: v.toString(), power: 8, rarity: 'common', upgraded: false });
                 }
             }
 
@@ -1060,12 +1112,13 @@
             container.innerHTML = '';
 
             const options = [
-                { name: 'Saco de Ouro', effect: 'Ganhe 100 de Ouro', icon: '💰', action: () => { state.gold += 100; finishBlessing(); } },
-                { name: 'Vitalidade', effect: '+30 Vida Máxima', icon: '🍎', action: () => { state.player.maxHp += 30; state.player.hp = state.player.maxHp; finishBlessing(); } },
+                { name: 'Saco de Ouro', effect: 'Ganhe 100 de Ouro', icon: '💰', action: () => { state.gold += 100; SoundManager.play('buy'); finishBlessing(); } },
+                { name: 'Vitalidade', effect: '+30 Vida Máxima', icon: '🍎', action: () => { state.player.maxHp += 30; state.player.hp = state.player.maxHp; SoundManager.play('heal'); finishBlessing(); } },
                 {
                     name: 'Relíquia Inicial', effect: 'Receba uma Relíquia aleatória', icon: '🎁', action: () => {
                         const rids = Object.keys(RELIC_DATA);
                         state.relics.push(rids[Math.floor(Math.random() * rids.length)]);
+                        SoundManager.play('buy');
                         finishBlessing();
                     }
                 }
@@ -1087,11 +1140,11 @@
 
         function generateMap() {
             state.mapNodes = [];
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= 51; i++) {
                 let type = 'battle';
-                if (i === 10 || i === 5) type = 'boss';
-                else if (i === 3 || i === 7) type = 'shop';
-                else if (i === 4 || i === 8) type = 'campfire';
+                if (i === 11 || i === 21|| i === 31 || i === 41 || i === 51 ) type = 'boss';
+                else if (i === 5 || i === 10 || i === 15 || i === 20 || i === 25 ||i === 30 || i === 35 || i === 40 || i === 45 || i === 50 ) type = 'shop';
+                else if (i === 9 || i === 19|| i === 29 || i === 39 || i === 49 ) type = 'campfire';
                 state.mapNodes.push({ floor: i, type: type });
             }
         }
@@ -1128,6 +1181,7 @@
 
         function campfireAction(type) {
             if (type === 'heal') {
+                SoundManager.play('heal');
                 const heal = Math.floor(state.player.maxHp * 0.3);
                 state.player.hp = Math.min(state.player.maxHp, state.player.hp + heal);
                 showToast(`Recuperou ${heal} HP!`, "#2ecc71");
@@ -1166,6 +1220,7 @@
         }
 
         function upgradeSelectedCard(index) {
+            SoundManager.play('buy'); // Reaproveitando som de upgrade/compra
             const card = state.player.deck[index];
             card.upgraded = true;
             card.power += (card.type === 'basic' ? 3 : 5);
@@ -1233,6 +1288,7 @@
                             return;
                         }
 
+                        SoundManager.play('buy');
                         state.gold -= price;
                         if (item.type === 'relic') state.relics.push(item.id);
                         else state.player.deck.push({ ...item });
@@ -1263,6 +1319,7 @@
                 el.className = `reward-card ${card.rarity}`;
                 el.innerHTML = `<div class="val">${card.value}</div><div class="cinzel">${card.name || card.value}</div>`;
                 el.onclick = () => {
+                    SoundManager.play('click');
                     state.player.deck.splice(index, 1);
                     state.gold -= 50;
                     showToast("Carta removida!");
@@ -1297,7 +1354,18 @@
                 { name: 'Lobisomem', hp: 45, intents: [{ type: 'attack', v: 10 }, { type: 'defend', v: 8 }] },
                 { name: 'Mago', hp: 20, intents: [{ type: 'attack', v: 12 }, { type: 'defend', v: 2 }] },
                 { name: 'Slime', hp: 50, intents: [{ type: 'defend', v: 10 }, { type: 'defend', v: 10 }] },
-                { name: 'Morcego', hp: 15, intents: [{ type: 'attack', v: 4 }, { type: 'attack', v: 4 }] }
+                { name: 'Morcego', hp: 15, intents: [{ type: 'attack', v: 4 }, { type: 'attack', v: 4 }] },
+                
+                { name: 'Esqueleto', hp: 22, intents: [{ type: 'attack', v: 6 }, { type: 'defend', v: 3 }] },
+                { name: 'Aranha Gigante', hp: 28, intents: [{ type: 'attack', v: 8 }, { type: 'attack', v: 4 }] },
+                { name: 'Golem de Pedra', hp: 60, intents: [{ type: 'defend', v: 12 }, { type: 'attack', v: 6 }] },
+                { name: 'Espectro', hp: 18, intents: [{ type: 'attack', v: 9 }, { type: 'defend', v: 5 }] },
+                { name: 'Orc Guerreiro', hp: 40, intents: [{ type: 'attack', v: 11 }, { type: 'defend', v: 6 }] },
+                { name: 'Cobra Venenosa', hp: 12, intents: [{ type: 'attack', v: 5 }, { type: 'attack', v: 10 }] },
+                { name: 'Primata Insano', hp: 35, intents: [{ type: 'defend', v: 15 }, { type: 'attack', v: 4 }] },
+                { name: 'Cérbero', hp: 24, intents: [{ type: 'attack', v: 13 }, { type: 'attack', v: 2 }] },
+                { name: 'Troll', hp: 55, intents: [{ type: 'attack', v: 14 }, { type: 'defend', v: 4 }] },
+                { name: 'Sombra', hp: 20, intents: [{ type: 'attack', v: 7 }, { type: 'attack', v: 7 }] },
             ];
 
             const selected = isBoss ? { name: 'Dragão', hp: 120 } : enemyPool[Math.floor(Math.random() * enemyPool.length)];
@@ -1308,7 +1376,6 @@
             state.enemy.board = new Array(10).fill(0);
             state.enemy.shield = 0;
 
-            // Sprite mapping: name to lowercase .png
             const spriteName = selected.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             state.enemy.sprite = `imagens/${spriteName}.png`;
 
@@ -1330,6 +1397,7 @@
             const playerStarts = Math.random() > 0.5;
 
             setTimeout(() => {
+                SoundManager.play('coin');
                 showToast(playerStarts ? "🪙 CARA: Você Começa!" : "🪙 COROA: Inimigo Começa!", playerStarts ? "#2ecc71" : "#e63946");
 
                 setTimeout(() => {
@@ -1337,7 +1405,7 @@
                         state.canPlay = true;
                         drawFromDeck();
                     } else {
-                        endPlayerTurn(); // Isso vai disparar a vez do inimigo
+                        endPlayerTurn(); 
                     }
                 }, 1200);
             }, 500);
@@ -1460,7 +1528,6 @@
             const val = state.enemy.board[index];
             if (val === 0) return;
 
-            // Check if player already has this card in their board
             if (state.player.board[val - 1] !== 0) {
                 showToast("Você já tem essa carta!");
                 return;
@@ -1471,7 +1538,7 @@
                 return;
             }
 
-            // state.enemy.board[index] = 0; // Removed: Now it's a copy!
+            SoundManager.play('draw');
             state.player.selectedCard = { value: val, type: 'basic', name: val.toString(), power: 2, rarity: 'rare' };
             usedThiefHand = true;
 
@@ -1514,6 +1581,8 @@
                     renderBattle();
                 } else return;
             }
+            
+            SoundManager.play('draw');
             const card = state.player.drawPile.pop();
 
             // Math Heals (Passives)
@@ -1523,21 +1592,25 @@
             const playerRect = playerUI ? playerUI.getBoundingClientRect() : { left: 0, top: 0 };
 
             if (val !== 0) {
+                let checkHeal = false;
                 if (val % 2 !== 0 && state.relics.includes('math_odd')) {
                     state.player.hp = Math.min(state.player.maxHp, state.player.hp + 2);
                     spawnFloatingText("+2❤️", "#2ecc71", playerRect.left, playerRect.top);
+                    checkHeal = true;
                 }
                 if (val % 2 === 0 && state.relics.includes('math_even')) {
                     state.player.hp = Math.min(state.player.maxHp, state.player.hp + 2);
                     spawnFloatingText("+2❤️", "#2ecc71", playerRect.left, playerRect.top);
+                    checkHeal = true;
                 }
                 if (isPrime(val) && state.relics.includes('math_prime')) {
                     state.player.hp = Math.min(state.player.maxHp, state.player.hp + 4);
                     spawnFloatingText("+4❤️", "#2ecc71", playerRect.left, playerRect.top);
+                    checkHeal = true;
                 }
+                if (checkHeal) SoundManager.play('heal');
             }
 
-            // Check if already has it in board (Coringa/Wild card can always be played)
             if (card.type !== 'wild' && state.player.board[card.value - 1] !== 0) {
                 if (state.relics.includes('hourglass') && !usedHourglass) {
                     usedHourglass = true;
@@ -1564,6 +1637,13 @@
                     showToast("Slot já ocupado!");
                     return;
                 }
+                
+                // Escolha do som pelo tipo de carta que está sendo alocada
+                if (card.type === 'attack') SoundManager.play('attack');
+                else if (card.type === 'defend') SoundManager.play('defend');
+                else if (card.type === 'heal') SoundManager.play('heal');
+                else SoundManager.play('click');
+
                 state.player.board[index] = (card.type === 'wild' ? pos : card.value);
                 state.player.selectedCard = null;
                 applyCardEffect(card);
@@ -1631,6 +1711,7 @@
                 }
 
                 if (state.enemy.intent.type === 'attack') {
+                    SoundManager.play('attack');
                     let dmg = Math.max(0, state.enemy.intent.value - state.player.shield);
                     state.player.shield = Math.max(0, state.player.shield - state.enemy.intent.value);
                     state.player.hp -= dmg;
@@ -1638,6 +1719,7 @@
                     playerUI.classList.add('shake');
                     setTimeout(() => playerUI.classList.remove('shake'), 400);
                 } else {
+                    SoundManager.play('defend');
                     state.enemy.shield += state.enemy.intent.value;
                     spawnFloatingText(`+${state.enemy.intent.value}🛡️`, "#3498db", enemyRect.left + 90, enemyRect.top + 50);
                 }
@@ -1662,6 +1744,7 @@
 
         function checkEnemyUltimate() {
             if (state.enemy.board.every(v => v !== 0)) {
+                SoundManager.play('ultimate');
                 showToast("ULTIMATE INIMIGO!", "#e63946");
                 state.player.hp -= 20;
                 spawnFloatingText("-20💥", "#e63946");
@@ -1673,6 +1756,7 @@
 
         function checkVictory() {
             if (state.player.board.every(v => v !== 0)) {
+                SoundManager.play('ultimate');
                 showToast("ULTIMATE!", "#f1c40f");
                 state.enemy.hp -= 30;
                 spawnFloatingText("-30💥", "#f1c40f");
@@ -1689,12 +1773,14 @@
 
         function victory() {
             state.battleActive = false;
+            SoundManager.play('victory');
             setTimeout(showRewards, 1000);
         }
 
         function checkDefeat() {
             if (state.player.hp <= 0) {
                 state.battleActive = false;
+                SoundManager.play('defeat');
                 showToast("FIM DA JORNADA", "#000");
                 setTimeout(() => location.reload(), 3000);
                 return true;
@@ -1741,6 +1827,8 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            SoundManager.init();
+            SoundManager.playBGM('sons/ambient_menu.wav');
             renderBattle();
             checkSave();
         });
