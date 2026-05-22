@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Décima Ordem: Roguelike Deckbuilder</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Premium Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <div id="toast">Mensagem</div>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="screen active">
+        <h1 class="cinzel" style="font-size: 4em; margin-bottom: 0.2em;">A Décima Ordem</h1>
+        <p class="cinzel" style="letter-spacing: 5px; color: var(--primary); margin-bottom: 2em;">A JORNADA DAS CARTAS</p>
+
+        <div class="menu-buttons">
+            <button id="continue-btn" class="menu-btn" style="display:none;" onclick="continueRun()">CONTINUAR</button>
+            <button class="menu-btn" onclick="openMapSelector()">NOVO JOGO</button>
+            <button class="menu-btn" onclick="openSkillTree()">ÁRVORE DE HABILIDADES</button>
+            <button class="menu-btn" onclick="openAchievements()">CONQUISTAS</button>
+            <button class="menu-btn" onclick="showScreen('settings')">CONFIGURAÇÕES</button>
+            <button class="menu-btn" onclick="quitGame()">SAIR</button>
+        </div>
+    </div>
+
+    <!-- SETTINGS SCREEN -->
+    <div id="settings-screen" class="screen">
+        <h2 class="cinzel">Configurações</h2>
+        <div class="settings-content">
+            <div class="setting-item">
+                <span>Velocidade das Animações</span>
+                <input type="range" min="1" max="3" value="2">
+            </div>
+            <div class="setting-item">
+                <span>Volume Global</span>
+                <input type="range" id="volume-slider" min="0" max="100" value="80" oninput="SoundManager.setVolume(this.value)">
+            </div>
+            <div class="setting-item">
+                <span>Modo de Exibição</span>
+                <button class="btn" style="padding: 5px 15px; font-size: 0.8em;">Tela Cheia</button>
+            </div>
+        </div>
+        <button class="btn" style="margin-top:20px;" onclick="showScreen('start')">VOLTAR</button>
+    </div>
+
+    <!-- BLESSING SCREEN -->
+    <div id="blessing-screen" class="screen">
+        <h2 class="cinzel">Bênção Inicial</h2>
+        <p>Escolha um auxílio para sua jornada:</p>
+        <div class="reward-container" id="blessing-container"></div>
+    </div>
+
+    <!-- MAP SCREEN -->
+    <div id="map-screen" class="screen">
+        <h2 class="cinzel">O Caminho</h2>
+        <div class="map-path" id="map-path"></div>
+    </div>
+
+    <!-- REWARD SCREEN -->
+    <div id="reward-screen" class="screen">
+        <h2 id="reward-title" class="cinzel">Vitória!</h2>
+        <p id="reward-subtitle">Escolha uma recompensa:</p>
+        <div class="reward-container" id="reward-container"></div>
+        <button id="skip-btn" class="btn" style="margin-top: 40px; background: transparent; color: var(--text-muted); border: 1px solid;" onclick="skipReward()">Pular</button>
+    </div>
+
+    <!-- CAMPFIRE SCREEN -->
+    <div id="campfire-screen" class="screen">
+        <h2 class="cinzel">Fogueira</h2>
+        <p>O fogo crepita, trazendo um breve descanso...</p>
+        <div class="reward-container" id="campfire-main">
+            <div class="reward-card" onclick="campfireAction('heal')">
+                <div class="val">❤️</div>
+                <div class="cinzel">Descansar</div>
+                <div class="effect">Recupera 30% HP</div>
+            </div>
+            <div class="reward-card" onclick="openCampfireUpgrade()">
+                <div class="val">⚔️</div>
+                <div class="cinzel">Forjar</div>
+                <div class="effect">Melhora uma carta específica</div>
+            </div>
+        </div>
+        <div id="campfire-upgrade-select" style="display:none; width:100%;">
+            <p>Escolha uma carta para melhorar:</p>
+            <div class="reward-container" id="upgrade-list" style="overflow-x:auto; padding-bottom: 20px;"></div>
+            <button class="btn" onclick="cancelCampfireUpgrade()" style="margin-top:20px; background:transparent; border:1px solid;">Voltar</button>
+        </div>
+    </div>
+
+    <!-- SHOP SCREEN -->
+    <div id="shop-screen" class="screen">
+        <h2 class="cinzel">Loja do Viajante</h2>
+        <p>🟡 Seu Ouro: <span id="shop-gold">0</span></p>
+        <div class="shop-grid" id="shop-container"></div>
+        <button class="btn" style="margin-top: 40px;" onclick="leaveShop()">Sair da Loja</button>
+    </div>
+
+    <!-- BATTLE SCREEN -->
+    <div id="battle-screen" class="screen">
+        <div class="battle-container">
+
+            <div class="entity-area">
+                <div class="info">
+                    <h3 id="enemy-name">Monstro</h3>
+                    <div id="enemy-intent-display" class="intent-display">
+                        <div class="intent-icon">⚔️</div>
+                        <small id="intent-text">Ataque: 10</small>
+                    </div>
+                    <div class="hp-bar-container">
+                        <div id="enemy-hp-bar" class="hp-bar-fill" style="width: 100%"></div>
+                        <div id="enemy-hp-text" class="hp-text">50 / 50</div>
+                        <div id="enemy-shield" class="shield-badge">0</div>
+                    </div>
+                </div>
+                <img id="enemy-sprite" src="https://via.placeholder.com/180" class="sprite">
+            </div>
+
+            <div id="enemy-board" class="board">
+                <div class="board-label">Tabuleiro do Inimigo</div>
+            </div>
+
+            <div id="player-board" class="board">
+                <div class="board-label">Seu Tabuleiro</div>
+            </div>
+
+            <div class="battle-footer">
+                <div class="pile" onclick="drawFromDeck()">
+                    <span>MONTE</span>
+                    <span id="draw-count" class="pile-count">30</span>
+                </div>
+
+                <div class="hand-slot" id="hand-slot"></div>
+
+                <div class="pile">
+                    <span>DESCARTE</span>
+                    <span id="discard-count" class="pile-count">0</span>
+                </div>
+
+                <div class="info">
+                    <h3>Você</h3>
+                    <div class="hp-bar-container">
+                        <div id="player-hp-bar" class="hp-bar-fill" style="width: 100%"></div>
+                        <div id="player-hp-text" class="hp-text">80 / 80</div>
+                        <div id="player-shield" class="shield-badge">0</div>
+                    </div>
+                    <div class="relic-bar" id="relic-bar"></div>
+                    <div style="margin-top: 5px; font-size: 0.85em; color: var(--text-muted);">
+                        🟡 Ouro: <span id="gold-count">0</span> | Andar: <span id="floor-count">1</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SKILLS SCREEN (ÁRVORE DE HABILIDADES) -->
+    <div id="skills-screen" class="screen">
+        <h2 class="cinzel" style="font-size: 3em; margin-bottom: 5px;">Árvore de Habilidades</h2>
+        <div style="font-size: 1.2em; margin-bottom: 25px; color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.25);">
+            🌟 Poeira Estelar Acumulada: <strong id="star-dust-count">0</strong>
+        </div>
+        <div class="skills-grid" id="skills-container" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; max-width: 900px; margin-top: 10px;"></div>
+        <button class="btn" style="margin-top: 35px; padding: 12px 30px;" onclick="showScreen('start')">VOLTAR AO MENU</button>
+    </div>
+
+    <!-- ACHIEVEMENTS SCREEN (CONQUISTAS) -->
+    <div id="achievements-screen" class="screen">
+        <h2 class="cinzel" style="font-size: 3em; margin-bottom: 10px;">Suas Conquistas</h2>
+        <p style="color: var(--text-muted); font-size: 1em; max-width: 550px; text-align: center; line-height: 1.6; margin-bottom: 30px;">Troféus permanentes que marcam sua maestria e grandes feitos em A Décima Ordem.</p>
+        <div class="achievements-grid" id="achievements-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 800px; padding: 10px; width: 100%;"></div>
+        <button class="btn" style="margin-top: 35px; padding: 12px 30px;" onclick="showScreen('start')">VOLTAR AO MENU</button>
+    </div>
+
+    <!-- MAP SELECTOR SCREEN (SELEÇÃO DE MUNDOS) -->
+    <div id="map-selector-screen" class="screen">
+        <h2 class="cinzel" style="font-size: 3em; margin-bottom: 5px;">Seletor de Mundos</h2>
+        <p style="color: var(--text-muted); font-size: 1em; max-width: 550px; text-align: center; line-height: 1.6; margin-bottom: 30px;">Escolha o mapa e enfrente os perigos correspondentes para provar sua maestria.</p>
+        
+        <div class="map-cards-container" id="map-cards-container" style="display: flex; gap: 25px; justify-content: center; width: 100%; max-width: 900px; padding: 10px;">
+            <!-- Renderizado dinamicamente com base nas conquistas e unlocks -->
+        </div>
+
+        <button class="btn cinzel" style="margin-top: 35px; padding: 12px 30px;" onclick="showScreen('start')">VOLTAR AO MENU</button>
+    </div>
+
+    <!-- ACT TRANSITION SCREEN (TRANSIÇÃO DE ATO) -->
+    <div id="act-transition-screen" class="screen">
+        <h1 class="cinzel" style="font-size: 3.5em; color: #ffd700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.4); margin: 0;">Mundo Concluído!</h1>
+        <div class="glass" style="padding: 35px; width: 480px; text-align: center; border-radius: 16px; margin: 25px 0; border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 15px 35px rgba(0,0,0,0.8);">
+            <p style="font-size: 1.05em; color: var(--text-muted); margin-bottom: 5px;">Você superou todos os perigos e avançará para o próximo portal:</p>
+            <h2 class="cinzel" id="next-map-title" style="color: var(--primary); font-size: 2.2em; margin: 10px 0 25px 0; text-shadow: 0 0 12px rgba(200, 161, 101, 0.35);">Mundo 2: O Deserto dos Ossos</h2>
+            <div style="font-size: 0.95em; line-height: 1.6; color: var(--text-muted); margin-bottom: 25px;">
+                Como recompensa divina pela sua vitória, sua saúde foi completamente restaurada e você recebeu uma **Relíquia Sagrada**!
+            </div>
+            <div id="act-reward-show" style="font-size: 3.5em; margin-bottom: 10px; filter: drop-shadow(0 0 8px #ffd700);">🎁</div>
+            <div id="act-reward-name" class="cinzel" style="font-size: 1.2em; color: #ffd700;">Nome da Relíquia</div>
+        </div>
+        <button class="btn cinzel" style="font-size: 1.25em; padding: 16px 40px; border-radius: 8px; font-weight: 700;" onclick="proceedToNextAct()">ENTRAR NO PORTAL</button>
+    </div>
+
+    <!-- RUN COMPLETED / GAME OVER PANEL SCREEN -->
+    <div id="gameover-screen" class="screen">
+        <h1 class="cinzel" id="run-result-title" style="font-size: 3.8em; margin: 0; text-shadow: 0 0 25px rgba(230, 57, 70, 0.45); color: #e63946;">Jornada Encerrada</h1>
+        <div class="glass" style="padding: 35px; width: 440px; text-align: center; border-radius: 16px; margin: 25px 0; border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 15px 35px rgba(0,0,0,0.8);">
+            <p style="font-size: 1.05em; color: var(--text-muted); margin-bottom: 15px;">Resumo da sua aventura nas ruínas:</p>
+            <h2 class="cinzel" id="run-result-floor" style="color: var(--primary); font-size: 2.2em; margin: 0 0 25px 0; text-shadow: 0 0 12px rgba(200, 161, 101, 0.35);">Andar Alcançado: 1</h2>
+            <div style="font-size: 1.35em; font-weight: 700; color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.25);" id="run-result-dust">
+                🌟 Poeira Estelar Coletada: +0
+            </div>
+        </div>
+        <button class="btn cinzel" style="font-size: 1.15em; padding: 16px 36px; border-radius: 8px; font-weight: 700;" onclick="showScreen('start')">RETORNAR AO MENU</button>
+    </div>
+
+    <!-- EVENT MODAL FOR MYSTERY NODES (?) -->
+    <div id="event-modal-container" class="event-overlay" style="display: none;">
+        <div class="event-modal">
+            <h2 id="event-title" class="cinzel" style="text-align: center; margin-bottom: 10px;">Nome do Evento</h2>
+            <div id="event-image" style="font-size: 4.5em; margin: 15px 0; text-align: center;">🔮</div>
+            <p id="event-text" style="font-style: italic; line-height: 1.6; margin-bottom: 25px; text-align: center;">Descrição...</p>
+            <div id="event-choices" class="menu-buttons" style="width: 100%;"></div>
+        </div>
+    </div>
+
+    <!-- Modular Game Scripts (Order matters for initialization dependencies) -->
+    <script src="js/state.js"></script>
+    <script src="js/sound.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
+</body>
+
+</html>
