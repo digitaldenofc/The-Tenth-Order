@@ -202,7 +202,7 @@ function initBattle(isBoss = false) {
         { name: 'Primata Insano', hp: 35, intents: [{ type: 'defend', v: 15 }, { type: 'attack', v: 4 }] },
         { name: 'Cérbero', hp: 54, intents: [{ type: 'attack', v: 19 }, { type: 'attack', v: 2 }] },
         { name: 'Troll', hp: 35, intents: [{ type: 'attack', v: 12 }, { type: 'defend', v: 4 }] },
-        { name: 'Sombra', hp: 20, intents: [{ type: 'attack', v: 7 }, { type: 'attack', v: 7 }] }*/
+        { name: 'Sombra', hp: 20, intents: [{ type: 'attack', v: 7 }, { type: 'attack', v: 7 }] }
     ];
 
     // Seleciona o Chefe baseado no mapa atual
