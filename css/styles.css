@@ -1,0 +1,1725 @@
+/* ==========================================================================
+   A DÉCIMA ORDEM - PREMIUM DARK FANTASY STYLESHEET
+   ========================================================================== */
+
+:root {
+    --bg-deep: #050507;
+    --bg-panel: rgba(14, 14, 18, 0.82);
+    --primary: #d4af37; /* Dourado Real */
+    --primary-glow: rgba(212, 175, 55, 0.45);
+    --secondary: #4b4c58;
+    --accent: #ff4757;
+    --text: #f5f6fa;
+    --text-muted: #a4b0be;
+    --card-white: linear-gradient(135deg, #fefbf0 0%, #e9d5a1 100%); /* Pergaminho Fino */
+    --card-dark: #0f1013;
+    --shadow: 0 20px 45px rgba(0, 0, 0, 0.85);
+    --transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    
+    /* Cores de Raridades */
+    --rare-color: #00d2d3;
+    --legendary-color: #ff9f43;
+    --curse-color: #8c7ae6;
+    
+    /* Auras de Raridades */
+    --common-aura: 0 6px 15px rgba(0, 0, 0, 0.7);
+    --rare-aura: 0 0 16px rgba(0, 210, 211, 0.45), 0 6px 15px rgba(0, 0, 0, 0.7);
+    --legendary-aura: 0 0 24px rgba(255, 159, 67, 0.6), 0 8px 25px rgba(0, 0, 0, 0.8);
+    --curse-aura: 0 0 18px rgba(140, 122, 230, 0.45), 0 6px 15px rgba(0, 0, 0, 0.7);
+    
+    /* Mist colors for Acts */
+    --mist-color: #1b3a24;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0a0a0c;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--secondary);
+    border-radius: 4px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at center, #1b1b22 0%, var(--bg-deep) 100%);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+h1, h2, h3, .cinzel {
+    font-family: 'Cinzel', serif;
+    color: var(--primary);
+    margin: 0;
+    letter-spacing: 1px;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* Screens */
+.screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+    transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    pointer-events: none;
+}
+
+.screen.active {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+/* Glassmorphism Panel Base */
+.settings-content, .reward-card, .shop-grid, .campfire-main {
+    background: rgba(22, 22, 26, 0.65);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 12px;
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* UI Components */
+#toast {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-150%);
+    background: var(--accent);
+    color: white;
+    padding: 12px 35px;
+    border-radius: 50px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 0.95em;
+    z-index: 1000;
+    transition: var(--transition);
+    box-shadow: 0 10px 30px rgba(255, 71, 87, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#toast.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Menu Buttons */
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 320px;
+}
+
+.menu-btn {
+    background: rgba(212, 175, 55, 0.03);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    color: var(--primary);
+    padding: 16px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    letter-spacing: 3px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.menu-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
+    transition: 0.5s;
+}
+
+.menu-btn:hover::before {
+    left: 100%;
+}
+
+.menu-btn:hover {
+    background: var(--primary);
+    color: #0d0d11;
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+    transform: translateY(-2px) scale(1.03);
+    font-weight: 700;
+}
+
+.settings-content {
+    padding: 30px;
+    width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95em;
+    color: var(--text);
+}
+
+.setting-item input[type="range"] {
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.btn {
+    background: linear-gradient(135deg, #ebd683 0%, var(--primary) 100%);
+    color: #0d0d11;
+    border: none;
+    padding: 12px 30px;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.35);
+    filter: brightness(1.1);
+}
+
+/* Battle Layout */
+.battle-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1020px;
+    gap: 15px;
+    height: 100%;
+    justify-content: center;
+}
+
+.entity-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 20px 30px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Dual sliding HP Bar (Classic Game Feel) */
+.hp-bar-container {
+    width: 260px;
+    height: 24px;
+    background: #1e1e24;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid #2f3542;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.hp-bar-delay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: #ff4757aa; /* Vermelho claro com delay */
+    transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 1;
+}
+
+.hp-bar-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(to right, #ff4757, #ff6b81);
+    transition: width 0.3s ease-out;
+    z-index: 2;
+}
+
+.hp-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 0.8em;
+    font-weight: 900;
+    line-height: 20px;
+    color: white;
+    text-shadow: 1px 1px 3px black;
+    z-index: 3;
+    letter-spacing: 1px;
+}
+
+.shield-badge {
+    position: absolute;
+    left: -12px;
+    top: -12px;
+    background: #2f3542;
+    color: #54a0ff;
+    padding: 6px 10px;
+    border-radius: 50%;
+    font-size: 0.8em;
+    font-weight: bold;
+    border: 2px solid #54a0ff;
+    display: none;
+    z-index: 4;
+    box-shadow: 0 0 10px rgba(84, 160, 255, 0.5);
+}
+
+.sprite {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
+}
+
+.intent-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.intent-icon {
+    font-size: 1.6em;
+    animation: float 2.5s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+/* Board Game Board - Craved wood slot styles */
+.board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    padding: 20px;
+    background: rgba(22, 22, 26, 0.6);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 4px 30px rgba(0, 0, 0, 0.8);
+}
+
+.board-label {
+    grid-column: span 5;
+    font-size: 0.75em;
+    letter-spacing: 4px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.slot {
+    width: 72px;
+    height: 104px;
+    border-radius: 10px;
+    border: 2px dashed rgba(212, 175, 55, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: var(--transition);
+    cursor: pointer;
+    box-shadow: inset 0 8px 15px rgba(0, 0, 0, 0.9); /* Inner Cavity Shadow */
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.slot.filled {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+}
+
+.slot.target {
+    border-color: var(--primary);
+    background: rgba(212, 175, 55, 0.08);
+    animation: pulseTarget 1.5s infinite;
+}
+
+@keyframes pulseTarget {
+    0%, 100% { border-color: rgba(212, 175, 55, 0.2); box-shadow: inset 0 8px 15px rgba(0, 0, 0, 0.9), 0 0 5px rgba(212, 175, 55, 0.1); }
+    50% { border-color: var(--primary); box-shadow: inset 0 8px 15px rgba(0, 0, 0, 0.9), 0 0 15px rgba(212, 175, 55, 0.4); }
+}
+
+.slot.selected {
+    border-color: var(--accent);
+    background: rgba(255, 71, 87, 0.1);
+}
+
+/* Redesigned Cards */
+.card {
+    width: 66px;
+    height: 98px;
+    background: var(--card-white);
+    border-radius: 8px;
+    color: #1e272e;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: 900;
+    font-size: 1.9em;
+    position: relative;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 0 8px rgba(255, 255, 255, 0.4);
+    transition: var(--transition);
+    user-select: none;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+/* Enemy Cards - Dark Charcoal Runic Theme */
+.card.enemy-card {
+    background: linear-gradient(135deg, #1f0f0f 0%, #0d0606 100%);
+    color: #ff4757;
+    border: 1px solid #7f1d1d;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 71, 87, 0.2);
+    text-shadow: 0 0 5px rgba(255, 71, 87, 0.5);
+}
+
+.card.hidden {
+    background: linear-gradient(135deg, #1e272e 0%, #0f1418 100%);
+    color: transparent;
+    border: 1px solid #2f3542;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.card.hidden::after {
+    content: "X";
+    color: rgba(212, 175, 55, 0.15);
+    font-size: 1.1em;
+    font-family: 'Cinzel';
+}
+
+.card.selected {
+    transform: translateY(-12px) scale(1.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+    outline: 2px solid var(--primary);
+}
+
+/* Card Rarities & Glowing Effects */
+.card.rare {
+    border: 2px solid var(--rare-color);
+    box-shadow: 0 0 15px rgba(0, 210, 211, 0.4), 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.card.legendary {
+    border: 2px solid var(--legendary-color);
+    box-shadow: 0 0 22px rgba(255, 159, 67, 0.6), 0 8px 20px rgba(0, 0, 0, 0.5);
+    animation: goldShimmer 3s infinite alternate;
+}
+
+@keyframes goldShimmer {
+    0% { filter: brightness(1); }
+    100% { filter: brightness(1.15) contrast(1.1); }
+}
+
+.card.curse {
+    border: 2px solid var(--curse-color);
+    background: linear-gradient(135deg, #2b1f3d 0%, #171121 100%);
+    color: var(--curse-color);
+    box-shadow: 0 0 15px rgba(140, 122, 230, 0.4);
+}
+
+.upgrade-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #2ecc71;
+    color: white;
+    font-size: 11px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #060608;
+    font-weight: 900;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.pos-hint {
+    position: absolute;
+    top: 4px;
+    left: 6px;
+    font-size: 9px;
+    color: rgba(0, 0, 0, 0.35);
+    font-weight: 700;
+}
+
+.card.hidden .pos-hint {
+    color: #4b5563;
+}
+
+/* Battle Footer */
+.battle-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.pile {
+    width: 78px;
+    height: 108px;
+    border-radius: 10px;
+    border: 2px solid var(--secondary);
+    background: linear-gradient(135deg, #23232a, #111114);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: var(--transition);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.pile:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.25);
+}
+
+.pile-count {
+    font-weight: bold;
+    font-size: 1.6em;
+    color: var(--text);
+    text-shadow: 0 2px 5px black;
+}
+
+.hand-slot {
+    width: 104px;
+    height: 144px;
+    border-radius: 12px;
+    border: 2px dashed rgba(212, 175, 55, 0.35);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    box-shadow: inset 0 5px 15px rgba(0,0,0,0.5);
+    transition: var(--transition);
+}
+
+.hand-slot:hover {
+    border-color: var(--primary);
+}
+
+.hand-slot .card {
+    width: 94px;
+    height: 134px;
+    font-size: 2.6em;
+}
+
+/* Start Screen */
+#start-screen {
+    background: linear-gradient(rgba(6, 6, 8, 0.8), rgba(6, 6, 8, 0.85)), url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+}
+
+#start-screen h1 {
+    font-size: 5em;
+    margin: 0;
+    text-shadow: 0 0 35px rgba(212, 175, 55, 0.45);
+}
+
+#start-screen p {
+    font-style: italic;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+}
+
+/* Map Screen */
+#map-screen {
+    background: radial-gradient(circle at center, #141419 0%, #060608 100%);
+    overflow-y: auto;
+    padding: 60px 20px;
+}
+
+.map-path {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 40px;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+}
+
+.map-node {
+    width: 64px;
+    height: 64px;
+    background: #16161a;
+    border: 2px solid var(--secondary);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.6em;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    z-index: 2;
+}
+
+.map-node:hover {
+    border-color: var(--primary);
+    transform: scale(1.15);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);
+}
+
+.map-node.active {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+    animation: activeNodeGlow 2s infinite alternate;
+}
+
+@keyframes activeNodeGlow {
+    0% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+    100% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.7); }
+}
+
+.map-node.disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.map-node::after {
+    content: '';
+    position: absolute;
+    top: -42px;
+    width: 2px;
+    height: 38px;
+    background: linear-gradient(to top, rgba(212, 175, 55, 0.4), rgba(212, 175, 55, 0.05));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+.map-node:last-child::after {
+    display: none;
+}
+
+/* Reward Screen */
+.reward-container {
+    display: flex;
+    gap: 25px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.reward-card {
+    width: 154px;
+    height: 224px;
+    background: var(--card-white);
+    border-radius: 12px;
+    color: #1c2327;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+    border: 3px solid transparent;
+    position: relative;
+}
+
+.reward-card:hover {
+    transform: translateY(-12px);
+    border-color: var(--primary);
+    box-shadow: 0 25px 40px rgba(0, 0, 0, 0.7);
+}
+
+.reward-card .val {
+    font-size: 3.2em;
+    font-weight: 900;
+    font-family: 'Cinzel';
+}
+
+.reward-card .effect {
+    font-size: 0.85em;
+    text-align: center;
+    color: #2f3542;
+    font-weight: 700;
+}
+
+.reward-card.relic {
+    background: linear-gradient(135deg, #1c1c22 0%, #0a0a0d 100%);
+    color: var(--primary);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.reward-card.relic .val {
+    font-size: 2.8em;
+}
+
+/* Shop and Campfire Layouts */
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 30px;
+    padding: 25px;
+}
+
+.price-tag {
+    background: #ffc048;
+    color: #1e272e;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 0.85em;
+    margin-top: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.relic-bar {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.relic-icon {
+    width: 36px;
+    height: 36px;
+    background: #141416;
+    border: 1px solid var(--primary);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.3em;
+    cursor: help;
+    transition: var(--transition);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.relic-icon:hover {
+    transform: scale(1.15) rotate(15deg);
+    box-shadow: 0 0 12px var(--primary-glow);
+}
+
+/* Core Physics Animations */
+@keyframes damageShake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-8px) rotate(-1.5deg); }
+    40% { transform: translateX(8px) rotate(1.5deg); }
+    60% { transform: translateX(-6px) rotate(-1deg); }
+    80% { transform: translateX(6px) rotate(1deg); }
+    100% { transform: translateX(0); }
+}
+
+.shake {
+    animation: damageShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes healGlow {
+    0% { box-shadow: 0 0 0 rgba(46, 204, 113, 0); }
+    50% { box-shadow: 0 0 25px rgba(46, 204, 113, 0.9); }
+    100% { box-shadow: 0 0 0 rgba(46, 204, 113, 0); }
+}
+
+.glow-heal {
+    animation: healGlow 0.8s ease-out;
+}
+
+/* Floating Text (Pop numbers) */
+.floating-text {
+    position: fixed;
+    pointer-events: none;
+    z-index: 999;
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: 2.2em;
+    text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+    animation: floatingPop 1.1s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+@keyframes floatingPop {
+    0% {
+        transform: scale(0.3) translateY(0);
+        opacity: 0;
+    }
+    20% {
+        transform: scale(1.3) translateY(-25px);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) translateY(-120px);
+        opacity: 0;
+    }
+}
+
+/* === LUCKY GOLD SLOT MECHANICAL EFFECT === */
+.slot.lucky {
+    border-color: #ffd700;
+    box-shadow: inset 0 8px 15px rgba(0, 0, 0, 0.9), 0 0 15px rgba(255, 215, 0, 0.6);
+    animation: luckySlotGlow 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes luckySlotGlow {
+    0% {
+        border-color: #ff9f43;
+        box-shadow: inset 0 8px 15px rgba(0, 0, 0, 0.95), 0 0 8px rgba(255, 159, 67, 0.3);
+    }
+    100% {
+        border-color: #ffd700;
+        box-shadow: inset 0 8px 15px rgba(0, 0, 0, 0.85), 0 0 24px rgba(255, 215, 0, 0.8);
+    }
+}
+
+/* === MYSTERY NARRATIVE EVENTS MODAL === */
+.event-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(4, 4, 6, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: eventFadeIn 0.35s ease-out;
+}
+
+.event-modal {
+    width: 480px;
+    max-width: 90%;
+    padding: 35px;
+    background: rgba(18, 18, 22, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 2px solid var(--primary);
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(212, 175, 55, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: eventPopUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards;
+}
+
+@keyframes eventFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes eventPopUp {
+    0% { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.event-modal p {
+    color: var(--text-muted);
+    font-size: 0.95em;
+}
+
+.event-modal .menu-buttons button {
+    font-size: 0.9em;
+    padding: 12px 20px;
+}
+
+/* === PERSISTENT SKILL TREE (ÁRVORE DE HABILIDADES) === */
+.skills-grid {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 900px;
+    margin-top: 10px;
+}
+
+.skill-card {
+    width: 200px;
+    background: rgba(20, 20, 24, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: var(--transition);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    position: relative;
+}
+
+.skill-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--primary);
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.15);
+}
+
+.skill-card h3 {
+    margin: 0 0 6px 0;
+    font-size: 1.1em;
+    color: var(--text);
+}
+
+.skill-card .desc {
+    font-size: 0.8em;
+    color: var(--text-muted);
+    line-height: 1.4;
+    min-height: 48px;
+    margin-bottom: 8px;
+}
+
+.level-dots {
+    display: flex;
+    gap: 6px;
+    margin: 8px 0;
+}
+
+.level-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.level-dot.active {
+    background: var(--primary);
+    border-color: #ffd700;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+.dust-cost {
+    background: rgba(255, 215, 0, 0.08);
+    color: #ffd700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 700;
+    margin: 10px 0;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+/* === ACHIEVEMENTS TROPHIES (CONQUISTAS) === */
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    max-width: 800px;
+    padding: 10px;
+    width: 100%;
+}
+
+.achievement-card {
+    background: rgba(18, 18, 22, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.achievement-card.locked {
+    opacity: 0.35;
+    filter: grayscale(1) blur(0.2px);
+}
+
+.achievement-card.unlocked {
+    opacity: 1;
+    border-color: var(--primary);
+    background: linear-gradient(135deg, rgba(22, 22, 26, 0.8) 0%, rgba(212, 175, 55, 0.06) 100%);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+}
+
+.achievement-icon {
+    font-size: 2.2em;
+    text-shadow: 0 0 8px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+}
+
+.achievement-card.unlocked .achievement-icon {
+    animation: trophyFloat 3.5s infinite alternate ease-in-out;
+}
+
+@keyframes trophyFloat {
+    0% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 2px rgba(255,215,0,0.2)); }
+    100% { transform: translateY(-3px) scale(1.08); filter: drop-shadow(0 0 10px rgba(255,215,0,0.65)); }
+}
+
+.achievement-details {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.achievement-title {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 1.02em;
+    color: var(--text);
+    margin: 0;
+}
+
+.achievement-card.unlocked .achievement-title {
+    color: var(--primary);
+    text-shadow: 0 0 10px rgba(200, 161, 101, 0.25);
+}
+
+.achievement-desc {
+    font-size: 0.78em;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.3;
+}
+
+/* === SHOP PERSISTENT LOCK & SOLD EFFECTS === */
+.reward-card {
+    position: relative;
+}
+
+.reward-card.purchased {
+    pointer-events: none;
+    cursor: default;
+}
+
+.sold-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 14, 0.78);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 15;
+    color: #ffd700;
+    font-size: 1.4em;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    animation: soldOverlayPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards;
+}
+
+@keyframes soldOverlayPop {
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.lock-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-muted);
+    font-size: 0.85em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 12;
+    transition: var(--transition);
+}
+
+.lock-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: var(--text);
+    transform: scale(1.1);
+}
+
+.lock-btn.locked {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: #ffd700;
+    color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    animation: lockActiveGlow 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes lockActiveGlow {
+    0% { box-shadow: 0 0 4px rgba(255, 215, 0, 0.3); }
+    100% { box-shadow: 0 0 12px rgba(255, 215, 0, 0.7); }
+}
+
+/* === MAP SELECTOR CUSTOM STYLES === */
+.map-cards-container {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.map-selector-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    border-radius: 16px;
+    text-align: center;
+    transition: var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    width: 250px;
+    box-sizing: border-box;
+    cursor: default;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+.map-selector-card.unlocked {
+    cursor: pointer;
+}
+
+.map-selector-card.unlocked:hover {
+    transform: translateY(-8px) scale(1.03);
+    border-color: var(--primary);
+    box-shadow: 0 12px 40px rgba(200, 161, 101, 0.2);
+}
+
+.map-selector-card.locked {
+    opacity: 0.65;
+    border-color: rgba(255, 255, 255, 0.03);
+}
+
+.map-icon {
+    font-size: 3.2em;
+    margin-bottom: 12px;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 70px;
+}
+
+.map-floors {
+    font-size: 0.88em;
+    font-weight: 700;
+    color: var(--primary);
+    background: rgba(200, 161, 101, 0.1);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin: 4px 0;
+    border: 1px solid rgba(200, 161, 101, 0.2);
+}
+
+.map-boss {
+    font-size: 0.88em;
+    font-weight: 700;
+    color: #e67e22;
+    margin-top: 5px;
+}
+
+.map-locked-tag {
+    font-weight: 800;
+    font-size: 0.9em;
+    color: #e63946;
+    letter-spacing: 2px;
+    border: 1px solid rgba(230, 57, 70, 0.3);
+    background: rgba(230, 57, 70, 0.08);
+    padding: 4px 14px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.map-bonus {
+    line-height: 1.45;
+}
+
+/* ==========================================================================
+   PREMIUM GRAPHICAL UPGRADE SUITE - A DÉCIMA ORDEM
+   ========================================================================== */
+
+/* 1. ATMOSPHERIC PARTICLES & MIST LAYERS */
+.particles-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.particle {
+    position: absolute;
+    background: rgba(255, 215, 0, 0.28);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: floatEmber 14s infinite linear;
+    filter: blur(0.5px);
+}
+
+@keyframes floatEmber {
+    0% {
+        transform: translateY(105vh) translateX(0) scale(0.6) rotate(0deg);
+        opacity: 0;
+    }
+    12% {
+        opacity: 0.75;
+    }
+    88% {
+        opacity: 0.75;
+    }
+    100% {
+        transform: translateY(-5vh) translateX(60px) scale(1.3) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.mist-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.22;
+    mix-blend-mode: screen;
+    transition: background 1.8s ease-in-out;
+    background: radial-gradient(circle at 25% 25%, var(--mist-color) 0%, transparent 65%),
+                radial-gradient(circle at 75% 75%, var(--mist-color) 0%, transparent 65%);
+    animation: mistShift 25s infinite alternate ease-in-out;
+}
+
+@keyframes mistShift {
+    0% {
+        transform: scale(1.0) translate(0, 0);
+    }
+    100% {
+        transform: scale(1.18) translate(-40px, 30px);
+    }
+}
+
+/* 2. THREE-DIMENSIONAL METALLIC GOLD TYPOGRAPHY */
+h1.cinzel, h2.cinzel, .cinzel-bevel {
+    background: linear-gradient(to bottom, #fff0bc 0%, #d4af37 45%, #9b7512 85%, #6a4f09 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 15px rgba(212, 175, 55, 0.28));
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+/* 3. HIGH-FIDELITY MEDIEVAL FANTASY CARDS */
+.card {
+    width: 66px;
+    height: 98px;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: var(--transition);
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+}
+
+.card.common {
+    background: linear-gradient(135deg, #1c1d22 0%, #0d0e11 100%);
+    border: 1.5px solid #575a63;
+    box-shadow: var(--common-aura);
+}
+
+.card.rare {
+    background: linear-gradient(135deg, #121e2f 0%, #080e18 100%);
+    border: 1.8px solid var(--rare-color);
+    box-shadow: var(--rare-aura);
+}
+
+.card.legendary {
+    background: linear-gradient(135deg, #2b1f0d 0%, #0e0a04 100%);
+    border: 2px solid var(--legendary-color);
+    box-shadow: var(--legendary-aura);
+}
+
+.card.curse {
+    background: linear-gradient(135deg, #170e24 0%, #07030d 100%);
+    border: 1.8px solid var(--curse-color);
+    box-shadow: var(--curse-aura);
+}
+
+.card.enemy-card {
+    background: linear-gradient(135deg, #260d0d 0%, #0e0202 100%);
+    border: 1.8px solid var(--accent);
+    box-shadow: var(--red-glow), 0 5px 12px rgba(0, 0, 0, 0.7);
+}
+
+.card.hidden {
+    background: linear-gradient(135deg, #16171d 0%, #0a0a0d 100%);
+    border: 1.5px solid #2f3542;
+    box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.04);
+}
+
+.card.selected {
+    transform: translateY(-16px) scale(1.12);
+    outline: 2px solid #ffd700;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.85), 0 0 25px rgba(255, 215, 0, 0.55);
+}
+
+/* Card SVG graphics styling */
+.card-svg-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3; /* Renderizado acima da ilustração central */
+}
+
+/* Card central illustration sprite style - Preenche toda a carta */
+.card-illustration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    z-index: 2;
+    border-radius: inherit; /* Mantém os cantos arredondados da carta */
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    transition: var(--transition);
+}
+
+.card-value-display {
+    font-family: 'Cinzel', serif;
+    font-size: 0.52em;
+    font-weight: 900;
+    color: #f1f2f6;
+    z-index: 4; /* Renderizado acima de tudo */
+    text-shadow: 0 1px 2px #000, 0 0 5px #000, 0 0 10px #000;
+    position: absolute;
+    pointer-events: none;
+    line-height: 1;
+}
+
+.card-value-display.top-left {
+    top: 6px;
+    left: 7px;
+    
+}
+
+.card-title-display {
+    font-family: 'Cinzel', serif;
+    font-size: 0.35em;
+    font-weight: 700;
+    color: var(--primary);
+    z-index: 4;
+    text-transform: uppercase;
+    position: absolute;
+    bottom: 8px; /* Reposicionado para a base pois o canto inferior está livre */
+    left: 50%;
+    transform: translateX(-50%);
+    letter-spacing: 0.5px;
+    text-shadow: 0 1.5px 2px #000, 0 0 4px #000;
+    white-space: nowrap;
+    background: rgba(10, 10, 14, 0.75);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 0.5px solid rgba(212, 175, 55, 0.22);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+/* Hand cards are slightly larger */
+.hand-slot .card {
+    width: 94px;
+    height: 134px;
+}
+
+.hand-slot .card-value-display {
+    font-size: 0.78em;
+}
+
+.hand-slot .card-value-display.top-left {
+    top: 8px;
+    left: 9px;
+}
+
+.hand-slot .card-title-display {
+    font-size: 0.48em;
+    bottom: 12px; /* Reposicionado para as cartas maiores da mão */
+    padding: 3px 8px;
+}
+
+/* 4. SOLID ENGRAVED WOOD & STONE BOARDS */
+.board {
+    background: linear-gradient(135deg, #191b22 0%, #0d0f13 100%);
+    border: 2px solid rgba(212, 175, 55, 0.16);
+    border-radius: 16px;
+    box-shadow: inset 0 5px 30px rgba(0, 0, 0, 0.95), 0 15px 35px rgba(0, 0, 0, 0.85);
+    position: relative;
+    padding: 22px;
+}
+
+.board-label {
+    font-family: 'Cinzel', serif;
+    color: var(--primary);
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+    font-size: 0.8em;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+/* 5. SOCKET/SLOT DEPTH REDESIGN */
+.slot {
+    width: 72px;
+    height: 104px;
+    border-radius: 10px;
+    border: 2px dashed rgba(212, 175, 55, 0.16);
+    background: rgba(4, 4, 6, 0.55);
+    box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.98);
+    transition: var(--transition);
+}
+
+.slot:hover {
+    border-color: rgba(212, 175, 55, 0.45);
+    background: rgba(212, 175, 55, 0.03);
+}
+
+.slot.target {
+    border-color: #d4af37;
+    background: rgba(212, 175, 55, 0.05);
+    box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.98), 0 0 16px rgba(212, 175, 55, 0.45);
+    animation: targetSlotPulse 1.8s infinite alternate ease-in-out;
+}
+
+@keyframes targetSlotPulse {
+    0% {
+        border-color: rgba(212, 175, 55, 0.25);
+        box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.98), 0 0 6px rgba(212, 175, 55, 0.15);
+    }
+    100% {
+        border-color: #ffd700;
+        box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.98), 0 0 22px rgba(255, 215, 0, 0.65);
+    }
+}
+
+.slot.lucky {
+    border-color: #ff9f43;
+    background: rgba(255, 159, 67, 0.03);
+    box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.98), 0 0 12px rgba(255, 159, 67, 0.25);
+    animation: goldSlotGlow 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes goldSlotGlow {
+    0% {
+        border-color: #ff9f43;
+        box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.98), 0 0 8px rgba(255, 159, 67, 0.3);
+    }
+    100% {
+        border-color: #ffd700;
+        box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.98), 0 0 24px rgba(255, 215, 0, 0.85);
+    }
+}
+
+/* 6. GLOSSY HP BARS & SHIELD BRASÕES */
+.hp-bar-container {
+    border: 2px solid #3c404b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    overflow: visible; /* Allows shield badge to stand out */
+}
+
+.hp-bar-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 48%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.12), transparent);
+    pointer-events: none;
+    z-index: 4;
+}
+
+.shield-badge {
+    left: -16px;
+    top: -14px;
+    background: linear-gradient(135deg, #2c3e50 0%, #0f171e 100%);
+    color: #00d2d3;
+    border: 2.5px solid #00d2d3;
+    padding: 7px 11px;
+    border-radius: 4px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    font-size: 0.95em;
+    font-weight: 800;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    box-shadow: 0 5px 15px rgba(0, 210, 211, 0.45);
+}
+
+/* HP Status Badges */
+.status-badge-container {
+    display: flex;
+    gap: 8px;
+    position: absolute;
+    right: 0;
+    top: -24px;
+}
+
+.status-badge {
+    font-size: 0.75em;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+.status-badge.poison {
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid #2ecc71;
+    color: #2ecc71;
+    text-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
+}
+
+.status-badge.burn {
+    background: rgba(230, 126, 34, 0.15);
+    border: 1px solid #e67e22;
+    color: #e67e22;
+    text-shadow: 0 0 5px rgba(230, 126, 34, 0.5);
+}
+
+/* 7. GLASSMORPHIC RELIC TOOLTIPS */
+.relic-tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: rgba(12, 12, 15, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid var(--primary);
+    border-radius: 12px;
+    padding: 15px 18px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.9), 0 0 20px rgba(212, 175, 55, 0.2);
+    z-index: 10000;
+    max-width: 290px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    opacity: 0;
+    transform: scale(0.95) translateY(12px);
+    transition: opacity 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.relic-tooltip.show {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+.relic-tooltip-title {
+    font-family: 'Cinzel', serif;
+    color: var(--primary);
+    font-size: 1.05em;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 5px;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.relic-tooltip-effect {
+    font-size: 0.85em;
+    color: #e2e8f0;
+    line-height: 1.45;
+}
+
+.relic-tooltip-lore {
+    font-size: 0.72em;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 3px;
+}
+
+/* 8. CONNECTING ENERGY CHANNELS & RUNE MAP SIGNALS */
+.map-path-line {
+    position: absolute;
+    width: 3px;
+    background: rgba(212, 175, 55, 0.15);
+    z-index: 1;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.map-path-line.active {
+    background: linear-gradient(to top, var(--primary), rgba(212, 175, 55, 0.05));
+    box-shadow: 0 0 10px var(--primary-glow);
+    animation: pathwayPulsing 2.2s infinite ease-in-out;
+}
+
+@keyframes pathwayPulsing {
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 1px rgba(212,175,55,0.2)); }
+    50% { filter: brightness(1.7) drop-shadow(0 0 8px rgba(212,175,55,0.7)); }
+}
+
+.map-node {
+    width: 68px;
+    height: 68px;
+    background: linear-gradient(135deg, #181920 0%, #090a0d 100%);
+    border: 2px solid rgba(212, 175, 55, 0.28);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.75), inset 0 2px 5px rgba(255, 255, 255, 0.04);
+    z-index: 2;
+    transition: var(--transition);
+}
+
+.map-node:hover {
+    transform: translateY(-3px) scale(1.1);
+    border-color: var(--primary);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.8), 0 0 18px var(--primary-glow);
+}
+
+.map-node svg {
+    width: 32px;
+    height: 32px;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
+}
+
+.map-node.active {
+    border-color: #ffd700;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.5), inset 0 2px 5px rgba(255, 255, 255, 0.1);
+    animation: activeMapNodeGlow 2.5s infinite alternate ease-in-out;
+}
+
+@keyframes activeMapNodeGlow {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.35);
+    }
+    100% {
+        transform: scale(1.08);
+        box-shadow: 0 0 35px rgba(255, 215, 0, 0.75);
+    }
+}
+
+.map-node.disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+    pointer-events: none;
+    border-color: #333;
+}
+
+.map-node::after {
+    content: '';
+    position: absolute;
+    top: -42px;
+    width: 3px;
+    height: 38px;
+    background: rgba(212, 175, 55, 0.15) !important;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    transition: all 0.3s ease;
+    display: block !important;
+}
+
+.map-node.disabled::after {
+    background: rgba(212, 175, 55, 0.55) !important;
+    box-shadow: 0 0 6px rgba(212, 175, 55, 0.3);
+}
+
+.map-node.active::after {
+    background: linear-gradient(to top, var(--primary), rgba(212, 175, 55, 0.05)) !important;
+    box-shadow: 0 0 12px var(--primary-glow);
+    animation: pathwayPulsing 2.2s infinite ease-in-out;
+}
+
+/* Glassmorphism panels general */
+.settings-content, .reward-card, .shop-grid, .campfire-main, .glass {
+    background: rgba(13, 13, 16, 0.82) !important;
+    backdrop-filter: blur(18px) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+    border: 1.5px solid rgba(212, 175, 55, 0.16) !important;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.88), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Button Upgrades */
+.menu-btn {
+    border: 1.5px solid rgba(212, 175, 55, 0.28);
+    background: linear-gradient(180deg, rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.01));
+    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.menu-btn:hover {
+    background: linear-gradient(180deg, #ffd700 0%, #d4af37 100%) !important;
+    border-color: #ffe670 !important;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.45) !important;
+    transform: translateY(-2px) scale(1.03) !important;
+}
+
+
+
+
+
