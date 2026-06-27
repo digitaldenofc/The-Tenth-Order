@@ -1028,7 +1028,7 @@ function renderHeroSelector(mapNum) {
         },
         {
             id: 'mage',
-            name: "Mago",
+            name: "Mage",
             icon: "🔮",
             desc: "Manipulador de energias arcanas, provocando tempestades de fogo e eletricidade.",
             relic: "Caldeirão Rúnico (🥣)",
